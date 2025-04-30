@@ -1,0 +1,65 @@
+import heapq
+
+def dijkstra(graph, start):
+    distances = {node: float('infinity') for node in graph}
+    distances[start] = 0
+    pq = [(0, start)]
+    previous = {node: None for node in graph}
+
+    while pq:
+        current_distance, current_node = heapq.heappop(pq)
+        if current_distance > distances[current_node]:
+            continue
+
+        for neighbor, weight in graph[current_node].items():
+            distance = current_distance + weight
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                previous[neighbor] = current_node
+                heapq.heappush(pq, (distance, neighbor))
+
+    return distances, previous
+
+def print_path(previous, start, end):
+    path = []
+    current = end
+    while current:
+        path.append(current)
+        current = previous[current]
+    path.reverse()
+    print(f"Shortest path from {start} to {end}: {' -> '.join(path)}")
+
+# Define graph 
+graph = {
+    'A': {'B': 4, 'H': 8},
+    'B': {'C': 8, 'H': 11},
+    'C': {'D': 7, 'F': 4, 'I': 2},
+    'D': {'E': 9, 'F': 14},
+    'E': {'F': 10},
+    'F': {'G': 2},
+    'G': {'H': 1, 'I': 6},
+    'H': {'G': 1, 'I': 7},
+    'I': {}
+}
+
+start_node = 'A'
+distances, previous = dijkstra(graph, start_node)
+
+print("Shortest distances from node A:")
+for node, distance in distances.items():
+    print(f"{node}: {distance}")
+
+print_path(previous, start_node, 'I')
+
+[OUTPUT]
+Shortest distances from node A:
+A: 0
+B: 4
+C: 12
+D: 19
+E: 28
+F: 16
+G: 9
+H: 8
+I: 14
+Shortest path from A to I: A -> B -> C -> I
