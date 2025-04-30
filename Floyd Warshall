@@ -1,0 +1,145 @@
+import sys
+
+def floyd_warshall(graph):
+    # Number of vertices in graph
+    V = len(graph)
+
+    # Initialize distance matrix
+    dist = [[float('inf')] * V for _ in range(V)]
+
+    # Initialize predecessor matrix
+    pred = [[None] * V for _ in range(V)]
+
+    # Initialize distances and predecessors
+    for i in range(V):
+        for j in range(V):
+            if i == j:
+                dist[i][j] = 0
+            elif graph[i][j] != 0:
+                dist[i][j] = graph[i][j]
+                pred[i][j] = i
+
+    # Main Floyd-Warshall algorithm
+    for k in range(V):
+        for i in range(V):
+            for j in range(V):
+                if dist[i][k] + dist[k][j] < dist[i][j]:
+                    dist[i][j] = dist[i][k] + dist[k][j]
+                    pred[i][j] = pred[k][j]
+
+    return dist, pred
+
+def print_path(pred, i, j):
+    if i == j:
+        return [chr(ord('A') + i)]
+    if pred[i][j] is None:
+        return [] # Handle case where there's no path
+    
+    # Initialize path inside function to be local
+    path = []
+    
+    # Recursively build path
+    path = print_path(pred, i, pred[i][j])
+    path.append(chr(ord('A') + j))
+    return path
+
+# Define graph 
+graph = [
+    [0, 4, 0, 0, 0, 0, 0, 8, 0],
+    [0, 0, 8, 0, 0, 0, 0, 11, 0],
+    [0, 0, 0, 7, 0, 4, 0, 0, 2],
+    [0, 0, 0, 0, 9, 14, 0, 0, 0],
+    [0, 0, 0, 0, 0, 10, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 2, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 1, 6],
+    [0, 0, 0, 0, 0, 0, 1, 0, 7],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0]
+]
+
+# Run Floyd-Warshall algorithm
+dist, pred = floyd_warshall(graph)
+
+# Print all-pairs shortest paths
+for i in range(len(graph)):
+    for j in range(len(graph)):
+        if i != j:
+            path = print_path(pred, i, j)
+            if path:
+                print(f"Shortest path from {chr(ord('A') + i)} to {chr(ord('A') + j)}: "
+                      f"{' -> '.join(path)} (distance: {dist[i][j]})")
+            else:
+                print(f"No path from {chr(ord('A') + i)} to {chr(ord('A') + j)}")
+
+[OUTPUT]
+Shortest path from A to B: A -> B (distance: 4)
+Shortest path from A to C: A -> B -> C (distance: 12)
+Shortest path from A to D: A -> B -> C -> D (distance: 19)
+Shortest path from A to E: A -> B -> C -> D -> E (distance: 28)
+Shortest path from A to F: A -> B -> C -> F (distance: 16)
+Shortest path from A to G: A -> H -> G (distance: 9)
+Shortest path from A to H: A -> H (distance: 8)
+Shortest path from A to I: A -> B -> C -> I (distance: 14)
+No path from B to A
+Shortest path from B to C: B -> C (distance: 8)
+Shortest path from B to D: B -> C -> D (distance: 15)
+Shortest path from B to E: B -> C -> D -> E (distance: 24)
+Shortest path from B to F: B -> C -> F (distance: 12)
+Shortest path from B to G: B -> H -> G (distance: 12)
+Shortest path from B to H: B -> H (distance: 11)
+Shortest path from B to I: B -> C -> I (distance: 10)
+No path from C to A
+No path from C to B
+Shortest path from C to D: C -> D (distance: 7)
+Shortest path from C to E: C -> D -> E (distance: 16)
+Shortest path from C to F: C -> F (distance: 4)
+Shortest path from C to G: C -> F -> G (distance: 6)
+Shortest path from C to H: C -> F -> G -> H (distance: 7)
+Shortest path from C to I: C -> I (distance: 2)
+No path from D to A
+No path from D to B
+No path from D to C
+Shortest path from D to E: D -> E (distance: 9)
+Shortest path from D to F: D -> F (distance: 14)
+Shortest path from D to G: D -> F -> G (distance: 16)
+Shortest path from D to H: D -> F -> G -> H (distance: 17)
+Shortest path from D to I: D -> F -> G -> I (distance: 22)
+No path from E to A
+No path from E to B
+No path from E to C
+No path from E to D
+Shortest path from E to F: E -> F (distance: 10)
+Shortest path from E to G: E -> F -> G (distance: 12)
+Shortest path from E to H: E -> F -> G -> H (distance: 13)
+Shortest path from E to I: E -> F -> G -> I (distance: 18)
+No path from F to A
+No path from F to B
+No path from F to C
+No path from F to D
+No path from F to E
+Shortest path from F to G: F -> G (distance: 2)
+Shortest path from F to H: F -> G -> H (distance: 3)
+Shortest path from F to I: F -> G -> I (distance: 8)
+No path from G to A
+No path from G to B
+No path from G to C
+No path from G to D
+No path from G to E
+No path from G to F
+Shortest path from G to H: G -> H (distance: 1)
+Shortest path from G to I: G -> I (distance: 6)
+No path from H to A
+No path from H to B
+No path from H to C
+No path from H to D
+No path from H to E
+No path from H to F
+Shortest path from H to G: H -> G (distance: 1)
+Shortest path from H to I: H -> I (distance: 7)
+No path from I to A
+No path from I to B
+No path from I to C
+No path from I to D
+No path from I to E
+No path from I to F
+No path from I to G
+No path from I to H
